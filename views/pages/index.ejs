@@ -1,0 +1,139 @@
+<!--
+
+  THIS IS FOR YOUR SCHEDULED TRIPS!!!!!!!
+
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<%- include('../partials/Modal'); %>
+<body class="container">
+
+<header>
+    <%- include('../partials/header'); %>
+</header>
+
+<style>
+    h2 {
+        text-align: left;
+    }
+</style>
+
+<main>
+    <div class="jumbotron">
+        <h2>Scheduled Trips</h2>
+        <br>
+        <div>
+            <div>
+                <button class="btn btn-link" id="myBtn">Schedule a New Trip </button>
+                <div id="myModal" class="modal">
+
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <!--Content goes here-->
+                        <h2 class="text-center"> Lets Take a trip :)</h2>
+                        <form class="jumbotron" action="/index/new" method="POST">
+                            <!-- Colum 1 for New Appointment Modal -->
+                            <div class="col-lg-10">
+                                <label>How do you plan on Traveling by?</label>
+                                <input class="form-control" name="transportation" id="transportation" type="text" placeholder="For example: bus/plane/car/etc.">
+                                <label>When do you plan on leaving? </label>
+                                <input class="form-control" name="startdate" id="startdate" type="text" placeholder=" Enter in format: mm-dd-yyyy">
+                                <label>When do you plan on coming back?</label>
+                                <input class="form-control" name="enddate" id="enddate" type="text" placeholder="Enter in format: mm-dd-yyyy">
+                                <label>What would you like to call this trip? </label>
+                                <input class="form-control" name="tripname" id="tripname" placeholder="Enter a phrase that will hepl you remember this trip :)">
+                                <br>
+                                <button type="submit" style="color:#198754" class="btn btn-success">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <button class="btn btn-link" id="myBtn3">Update an Existing Trip</button>
+                <!-- Add Update Appointment Modal -->
+                <div id="myModal3" class="modal">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <span class="close3">&times;</span>
+                        <!--Content goes here-->
+                        <h2 class="text-center">Lets Update Your Trip :)</h2>
+                        <form action="/index/update" method="POST">
+                            <div class="jumbotron">
+                                <!--drop down for Job ID -->
+                                <label for="ex1">Select the Trip id You Wish to Update</label>
+                                <select class="form-control" name="trip_id" id="trip_id">
+                                    <% trips_list.forEach(function(trips_list) { %>
+                                        <option value=<%= trips_list.trip_id%>><%= trips_list.trip_id%> | <%= trips_list.tripname%></option>
+                                    <% }); %>
+                                </select>
+                                <br>
+                                <button type="submit" style="color:#198754" class="btn btn-success">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <button class="btn btn-link" id="myBtn4">Delete an Existing Trip</button>
+                <div id="myModal4" class="modal">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <span class="close4">&times;</span>
+                        <!--Content goes here-->
+                        <h2 class="text-center">Lets Update Your Trip :)</h2>
+                        <form action="/index/delete" method="post">
+                            <div class="jumbotron">
+                                <!--drop down for Job ID -->
+                                <label for="ex1">Select the Trip id You Wish to Delete</label>
+                                <select class="form-control" name="trip_id" id="trip_id">
+                                    <% trips_list.forEach(function(trips_list) { %>
+                                        <option value=<%= trips_list.trip_id%>><%= trips_list.trip_id%> | <%= trips_list.tripname%></option>
+                                    <% }); %>
+                                </select>
+                                <br>
+                                <button type="submit" style="color:#198754" class="btn btn-success">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <table class="table">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Trip id</th>
+                        <th>Transportation Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Trip Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% trips_list.forEach(function(trips_list) { %>
+                    <tr>
+                        <td> <%= trips_list.trip_id%></td>
+                        <td> <%=trips_list.transportation%></td>
+                        <td> <%= trips_list.startdate%></td>
+                        <td><%=trips_list.enddate%></td>
+                        <td><%=trips_list.tripname%></td>
+
+                        <% }); %>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>

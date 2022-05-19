@@ -1,0 +1,138 @@
+<!--
+
+  THIS IS FOR YOUR DESTINATIONS !!!!!!!
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<%- include('../partials/Modal'); %>
+<body class="container">
+
+<header>
+    <%- include('../partials/header'); %>
+</header>
+
+<style>
+    h2 {
+        text-align: left;
+    }
+</style>
+
+<main>
+    <div class="jumbotron">
+        <h2>My Destinations</h2>
+        <br>
+        <div>
+            <div>
+                <button class="btn btn-link" id="myBtn">Schedule a New Destination </button>
+
+                <div id="myModal" class="modal">
+
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2 class="text-center"> Lets document our Trip :)</h2>
+                        <div class="jumbotron">
+                            <form action="/des/new" method="post">
+
+
+                                <label>What is the name of the country you will be visiting? </label>
+                                <input class="form-control" placeholder="Ex: Japan" name="country" id="country" type="text">
+                                <label>What is the name of city you plan on visiting? </label>
+                                <input class="form-control" placeholder="Ex: Tokyo" name="city" id="city" type="text">
+                                <label>What are you most excited to go see?</label>
+                                <input class="form-control" placeholder="Ex: Yanaka photo spot!" name="sightseeing" id="sightseeing" type="text">
+                                <BR>
+                                <BR>
+                                <button type="submit" style="background-color:#198754" class="btn btn-success">Submit</button>
+
+
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+                <button class="btn btn-link" id="myBtn3">Update an Existing Destination </button>
+                <!-- Add Update Appointment Modal -->
+                <div id="myModal3" class="modal">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <span class="close3">&times;</span>
+                        <!--Content goes here-->
+                        <h2 class="text-center">Lets Update Your Destination :)</h2>
+                        <form action="/des/update" method="POST">
+                            <div class="jumbotron">
+                                <!--drop down for Job ID -->
+                                <label for="ex1">Select the Destination id You Wish to Update</label>
+                                <select class="form-control" name="id" id="id">
+                                    <% destinationz_list.forEach(function(destinationz_list) { %>
+                                        <option value=<%= destinationz_list.id%>><%= destinationz_list.id%> | <%= destinationz_list.country%></option>
+                                    <% }); %>
+                                </select>
+                                <br>
+                                <button type="submit" style="color:#198754" class="btn btn-success">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <button class="btn btn-link" id="myBtn4">Delete an Existing Destination</button>
+                <div id="myModal4" class="modal">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <span class="close4">&times;</span>
+                        <!--Content goes here-->
+                        <h2 class="text-center">Lets Delete a Destination :)</h2>
+                        <form action="/des/delete" method="post">
+                            <div class="jumbotron">
+                                <!--drop down for trip ID -->
+                                <label for="ex1">Select the Destination id You Wish to Delete</label>
+                                <select class="form-control" name="id" id="id">
+                                    <% destinationz_list.forEach(function(destinationz_list) { %>
+                                        <option value=<%= destinationz_list.id%>><%= destinationz_list.id%> | <%= destinationz_list.country%></option>
+                                    <% }); %>
+                                </select>
+                                <br>
+                                <button type="submit" style="color:#198754" class="btn btn-success">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <table class="table">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Destination id</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Sight Seeing</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% destinationz_list.forEach(function(destinationz_list) { %>
+                    <tr>
+                        <td> <%= destinationz_list.id%></td>
+                        <td> <%=destinationz_list.country%></td>
+                        <td> <%= destinationz_list.city%></td>
+                        <td><%=destinationz_list.sightseeing%></td>
+
+                        <% }); %>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+<footer>
+    <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>
