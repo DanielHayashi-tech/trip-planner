@@ -1,28 +1,17 @@
 // load the things we need
 var express = require('express');
 var app = express();
-
 const bodyParser  = require('body-parser');
 const { default: axios } = require('axios');
 // required module to make calls to a REST API
 const { response } = require('express');
 const req = require('express/lib/request');
-var selectedID = "";
 app.use(bodyParser.urlencoded());
-
-
-// testing git
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
-// OUR WELCOME PAGE (WISHES YOU A NICE MESSAGE)
-app.get('/home', function(req, res){
-    res.render('pages/home');
 
-});
-
-
-// LOGIN PAGE
+/////////////////////////////////// LOGIN/ LOGOUT PAGE ///////////////////////////////////
 app.get('/', function(req, res) {
     var flag = 0;
     res.render('pages/login', {flag: flag
@@ -50,29 +39,18 @@ app.post('/login', function(req, res){
     )
 });
 
-// LOGIN OUT PAGE
 app.get('/logout', function(req, res){
     res.render('redirects/loggedout');
 });
 
 
+/////////////////////////////////// OUR WELCOME PAGE (WISHES YOU A NICE MESSAGE) ///////////////////////////////////
+app.get('/home', function(req, res){
+    res.render('pages/home');
 
-// ADD DATA TO TABLE
-app.get('/index', function(req, res) {
-    axios.get('http://127.0.0.1:5000/api/tripz')
-        .then((response)=>{
-            var tripz_data = response.data
-            if (tripz_data === "No Active User Detected" || tripz_data === "Session Timed Out! Please Log Back in") {
-                var flag = 1;
-                var response = tripz_data
-                res.render('pages/login', {flag: flag, response: response})
-            }
-            else {
-                res.render('pages/index', {trips_list: tripz_data});
-            }
-        });
 });
 
+/////////////////////////////////// DESTINATION PAGE ///////////////////////////////////
 
 // ADD DATA TO TABLE
 app.get('/des', function(req, res) {
@@ -91,8 +69,6 @@ app.get('/des', function(req, res) {
 });
 
 
-
-
 // Add destination
 app.post('/des/new', function(req, res) {
     axios.post('http://127.0.0.1:5000/api/destinationz/add',
@@ -106,6 +82,41 @@ app.post('/des/new', function(req, res) {
             var message = response.data
             {
                 res.render('redirects/redirecthome', {message : message});
+            }
+        });
+});
+
+// Deletes destination by ID
+app.post('/des/delete', function(req, res) {
+    axios.delete('http://127.0.0.1:5000/api/destinationz/delete',{
+            data:{
+                id: req.body.id
+            }
+        }
+    )
+        .then((response)=>{
+            var message = response.data
+            {
+                res.render('redirects/redirecthome', {message : message});
+            }
+        });
+});
+
+
+/////////////////////////////////// INDEX PAGE/ TRIPZ PAGE  - SAME THING ///////////////////////////////////
+
+// ADD DATA TO TABLE
+app.get('/index', function(req, res) {
+    axios.get('http://127.0.0.1:5000/api/tripz')
+        .then((response)=>{
+            var tripz_data = response.data
+            if (tripz_data === "No Active User Detected" || tripz_data === "Session Timed Out! Please Log Back in") {
+                var flag = 1;
+                var response = tripz_data
+                res.render('pages/login', {flag: flag, response: response})
+            }
+            else {
+                res.render('pages/index', {trips_list: tripz_data});
             }
         });
 });
@@ -130,24 +141,6 @@ app.post('/index/new', function(req, res) {
 });
 
 
-
-// Deletes destination by ID
-app.post('/des/delete', function(req, res) {
-    axios.delete('http://127.0.0.1:5000/api/destinationz/delete',{
-            data:{
-                id: req.body.id
-            }
-        }
-    )
-        .then((response)=>{
-            var message = response.data
-
-            {
-                res.render('redirects/redirecthome', {message : message});
-            }
-        });
-});
-
 // Deletes trip by ID
 app.post('/index/delete', function(req, res) {
     axios.delete('http://127.0.0.1:5000/api/tripz/delete',{
@@ -165,34 +158,49 @@ app.post('/index/delete', function(req, res) {
         });
 });
 
-
-
-
-// UDATING GOES HERE
-
-// Pushes updated information to the database
-app.post('/des/update', function(req, res) {
-    axios.put('http://127.0.0.1:5000/api/destination/update',
+// creates the modal to update your db
+app.post('/index/update/info', function(req, res) {
+    axios.post('http://127.0.0.1:5000/api/tripz/update',
         {
-            id: req.body.id,
-            country: req.body.country,
-            city: req.body.city,
-            sightseeing: req.body.sightseeing
+            trip_id: req.body.trip_id
+
         }
     )
         .then((response)=>{
-            var service_data = response.data
-            if (service_data === "Session Timed Out! Please Log Back in" || service_data ==="No Active User Detected"){
-                var flag = 1;
-                var response = service_data
-                res.render('pages/login', {flag: flag, response: response})
-            }
-            else{
-                var message = response.data
-                res.render('redirects/redirecthome', {message : message});
+            the_tripz_data = response.data
+            {
+                res.render('updates/updatetripz', {
+                    trip_id: req.body.trip_id
+
+
+                });
             }
         });
 });
+
+// creates the modal to update your db
+app.post('/index/update', function(req, res) {
+    axios.put('http://127.0.0.1:5000/api/tripz',
+        {
+            trip_id: req.body.trip_id,
+            transportation: req.body.transportation,
+            startdate: req.body.startdate,
+            enddate: req.body.enddate,
+            tripname: req.body.tripname
+
+        }
+    )
+        .then((response)=>{
+            var message = response.data
+            {
+                res.render('redirects/redirectindex', {message : message});
+            }
+        });
+});
+
+
+
+
 
 
 app.listen(8080);

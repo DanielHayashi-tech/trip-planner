@@ -1,4 +1,3 @@
-import datetime
 import flask
 from flask import jsonify
 from flask import request
@@ -6,10 +5,9 @@ from db import create_connection, execute_query, execute_read_query
 
 # connecting to mysql database
 conn = create_connection('coogs.cypiz5agmq0c.us-east-1.rds.amazonaws.com', 'admin', 'phoebe123', 'coogs_db')
-
 # setting up the application
 app = flask.Flask(__name__)
-# allow to show errors in browser
+# showing errors in browser
 app.config["DEBUG"] = True
 
 
@@ -18,11 +16,11 @@ app.config["DEBUG"] = True
 def startup():
     return "API Is running"
 
-
-
 ##############################################################################
 #                             LOGIN                                          #
 ##############################################################################
+
+
 @app.route('/api/authenticate', methods=['GET'])
 def user_authentication():
     user_logininfo = request.get_json()
@@ -52,17 +50,11 @@ def user_authentication():
     return 'COULD NOT VERIFY!'
 
 
-
 ##############################################################################
-#       End points that will populate the tables                             #
+#                                 DESTINATIONS                               #
 ##############################################################################
-@app.route('/api/tripz', methods=['GET'])
-def testing_trip():
-    query = "SELECT * FROM tripz;"
-    trip = execute_read_query(conn, query)
-    return jsonify(trip)
 
-
+# populate tables
 @app.route('/api/destinationz', methods=['GET'])
 def testing_des():
     query = "SELECT * FROM destination;"
@@ -70,64 +62,21 @@ def testing_des():
     return jsonify(destination)
 
 
-
-
-
-##############################################################################
-#                   ADDING   DATA                                            #
-##############################################################################
-
+# ADD some data
 @app.route('/api/destinationz/add', methods=['POST'])
-# creating new variables for updated destinations
 def add_destinations():
     request_data = request.get_json()
     country = request_data['country']
     city = request_data['city']
     sightseeing = request_data['sightseeing']
 
-    # query function in order to insert updated trips into destination table
     query = """INSERT INTO destination (country, city, sightseeing) VALUES ('%s', '%s', '%s');""" % (
         country, city, sightseeing)
     execute_query(conn, query)
 
     return 'ADD REQUEST SUCCESSFUL'
 
-
-@app.route('/api/tripz/add', methods=['POST'])
-# creating new variables for updated trips
-def add_tripz():
-    request_data = request.get_json()
-    transportation = request_data['transportation']
-    startdate = request_data['startdate']
-    enddate = request_data['enddate']
-    tripname = request_data['tripname']
-
-    # query function in order to insert updated destination details to trips table
-    query = "INSERT INTO tripz (transportation, startdate, enddate, tripname) VALUES ('%s', '%s', '%s', '%s')" % (
-         transportation, startdate, enddate, tripname)
-    execute_query(conn, query)
-
-    return 'ADD REQUEST SUCCESSFUL'
-
-##############################################################################
-#                   DELETE   DATA                                            #
-##############################################################################
-
-
-
-# endpoint to delete a trip by id
-@app.route('/api/tripz/delete', methods=['DELETE'])
-def delete_trip():
-    request_data = request.get_json()
-    idToDelete = request_data['trip_id']
-
-    query = "DELETE FROM tripz WHERE trip_id = %s" % (idToDelete)
-    execute_query(conn, query)
-
-    return "DELETE REQUEST SUCCESSFUL"
-
-
-# endpoint to delete a destination by id
+# delete some data
 @app.route('/api/destinationz/delete', methods=['DELETE'])
 def delete_destination():
     request_data = request.get_json()
@@ -139,56 +88,60 @@ def delete_destination():
     return "DELETE REQUEST SUCCESSFUL"
 
 
+##############################################################################
+#                           INDEX                                            #
+##############################################################################
+
+# populate tables
+@app.route('/api/tripz', methods=['GET'])
+def testing_trip():
+    query = "SELECT * FROM tripz;"
+    trip = execute_read_query(conn, query)
+    return jsonify(trip)
+
+# ADD some data
+@app.route('/api/tripz/add', methods=['POST'])
+def add_tripz():
+    request_data = request.get_json()
+    transportation = request_data['transportation']
+    startdate = request_data['startdate']
+    enddate = request_data['enddate']
+    tripname = request_data['tripname']
+
+    query = "INSERT INTO tripz (transportation, startdate, enddate, tripname) VALUES ('%s', '%s', '%s', '%s')" % (
+         transportation, startdate, enddate, tripname)
+    execute_query(conn, query)
+
+    return 'ADD REQUEST SUCCESSFUL'
+
+# delete some data
+@app.route('/api/tripz/delete', methods=['DELETE'])
+def delete_trip():
+    request_data = request.get_json()
+    idToDelete = request_data['trip_id']
+
+    query = "DELETE FROM tripz WHERE trip_id = %s" % (idToDelete)
+    execute_query(conn, query)
+
+    return "DELETE REQUEST SUCCESSFUL"
 
 
-
-
-
-
-
-
-
-
-
-# when using the GET method can you please usew the x-www-form-urlencoded to pull by id
-@app.route('/api/trip', methods=['GET'])
+# set up update modal by ID
+@app.route('/api/tripz/update', methods=['POST'])
 def trip_id():
     # this request pulls id from aws
-    if 'id' in request.args:
-        id = int(request.args['id'])
+    if 'trip_id' in request.args:
+        trip_id = int(request.args['trip_id'])
     else:
         return 'ERROR: No ID Provided'
     results = []
-
-    query = "SELECT * FROM tripz WHERE id = %s" % (id)
+    query = "SELECT * FROM tripz WHERE trip_id = %s" % (trip_id)
     trip = execute_read_query(conn, query)
-    # return the trip table in json format
     return jsonify(trip)
 
 
-# endpoint to get id
-@app.route('/api/destination', methods=['GET'])
-def destination_id():
-    if 'id' in request.args:
-        id = int(request.args['id'])
-    else:
-        return 'ERROR: No ID Provided'
-    results = []
-
-    query = "SELECT * FROM destination WHERE id = %s" % (id)
-    destination = execute_read_query(conn, query)
-    # return the destination table in json format
-    return jsonify(destination)
-
-
-
-
-
-
-
 # update a trip using PUT method
-@app.route('/api/trip', methods=['PUT'])
-# creating new variables for updated trips
+@app.route('/api/tripz', methods=['PUT'])
 def add_trip():
     request_data = request.get_json()
     transportation = request_data['transportation']
@@ -202,36 +155,5 @@ def add_trip():
     execute_query(conn, query)
 
     return 'UPDATE REQUEST SUCCESSFUL'
-
-
-# Add a destination as PUT method
-@app.route('/api/destination/update', methods=['PUT'])
-# creating new variables for updated destinations
-def add_destination():
-    request_data = request.get_json()
-    country = request_data['country']
-    city = request_data['city']
-    sightseeing = request_data['sightseeing']
-
-    # query function in order to insert updated destinations into the destinations table
-    query = "INSERT INTO destination (country, city, sightseeing) VALUES ('%s', '%s', '%s')" % (
-        country, city, sightseeing)
-    execute_query(conn, query)
-
-    return 'ADD REQUEST SUCCESSFUL'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 app.run()
