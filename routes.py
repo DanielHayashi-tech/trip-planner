@@ -144,14 +144,18 @@ def trip_id():
 @app.route('/api/tripz', methods=['PUT'])
 def add_trip():
     request_data = request.get_json()
+    trip_id = request_data['trip_id']
     transportation = request_data['transportation']
     startdate = request_data['startdate']
     enddate = request_data['enddate']
     tripname = request_data['tripname']
 
-    # query function in order to insert updated trips into the trip table
-    query = "INSERT INTO tripz ( transportation, startdate, enddate, tripname) VALUES ( '%s', '%s', %s, '%s')" % (
-         transportation, startdate, enddate, tripname)
+    query = """
+    UPDATE tripz 
+    SET transportation='%s', startdate='%s', enddate='%s', tripname='%s'
+    WHERE trip_id = %s 
+    """ % (
+         transportation, startdate, enddate, tripname, trip_id)
     execute_query(conn, query)
 
     return 'UPDATE REQUEST SUCCESSFUL'

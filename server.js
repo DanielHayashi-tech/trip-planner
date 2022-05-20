@@ -187,7 +187,6 @@ app.post('/index/update', function(req, res) {
             startdate: req.body.startdate,
             enddate: req.body.enddate,
             tripname: req.body.tripname
-
         }
     )
         .then((response)=>{
