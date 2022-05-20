@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<%- include('../partials/Modal'); %>
+
+<body class="container">
+
+<header>
+    <%- include('../partials/header'); %>
+</header>
+
+<main class="container">
+    <h2 class="text-center"> Lets Update your Destination :)</h2>
+    <form class="jumbotron" action="/des/update" method="post">
+        <!-- Colum 1 for New Appointment Modal -->
+        <div class="col-lg-10">
+            <input class="form-control" name="id" id="id" type="text" value=<%=id%>>
+            <BR>
+            <BR>
+            <label>What is the name of the country you will be visiting? </label>
+            <input class="form-control" name="country" id="country" type="text">
+            <label>What is the name of city you plan on visiting? </label>
+            <input class="form-control" name="city" id="city" type="text">
+            <label>What are you most excited to go see?</label>
+            <input class="form-control" name="sightseeing" id="sightseeing" type="text">
+            <BR>
+            <BR>
+            <button type="submit" style="background-color:#198754" class="btn btn-success">Submit</button>
+        </div>
+    </form>
+</main>
+<BR>
+<BR>
+<BR>
+<BR>
+
+
+<footer>
+    <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>

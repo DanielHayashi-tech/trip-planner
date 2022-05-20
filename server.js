@@ -103,6 +103,45 @@ app.post('/des/delete', function(req, res) {
 });
 
 
+// creates the modal to update your db
+app.post('/des/update/info', function(req, res) {
+    axios.post('http://127.0.0.1:5000/api/dez/update',
+        {
+            id: req.body.id
+
+        }
+    )
+        .then((response)=>{
+            the_des_data = response.data
+            {
+                res.render('updates/updatedez', {
+                    id: req.body.id
+
+
+                });
+            }
+        });
+});
+
+// pushes the update to db
+app.post('/des/update', function(req, res) {
+    axios.put('http://127.0.0.1:5000/api/dez',
+        {
+            id: req.body.id,
+            country: req.body.country,
+            city: req.body.city,
+            sightseeing: req.body.sightseeing
+        }
+    )
+        .then((response)=>{
+            var message = response.data
+            {
+                res.render('redirects/redirecthome', {message : message});
+            }
+        });
+});
+
+
 /////////////////////////////////// INDEX PAGE/ TRIPZ PAGE  - SAME THING ///////////////////////////////////
 
 // ADD DATA TO TABLE
@@ -178,7 +217,7 @@ app.post('/index/update/info', function(req, res) {
         });
 });
 
-// creates the modal to update your db
+// pushes the update to db
 app.post('/index/update', function(req, res) {
     axios.put('http://127.0.0.1:5000/api/tripz',
         {
