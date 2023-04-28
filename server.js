@@ -236,8 +236,12 @@ app.post('/index/update', function(req, res) {
         });
 });
 
-
-
+/////////////////////////////////// FUN FACTS PAGE ///////////////////////////////////
+app.get('/funfacts', function(req, res) {
+    var flag = 0
+    res.render('pages/funfacts', {flag: flag
+    });
+});
 
 
 
